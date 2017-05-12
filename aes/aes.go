@@ -56,8 +56,6 @@ func subWord(w uint32) uint32 {
 		uint32(sbox[w&0xff])
 }
 
-// Key expansion algorithm
-// FIPS-197, 5.2 Key Expansion, Figure 11
 func expandKey(k []byte) []uint32 {
 	nb := 4
 	nk := len(k) / 4
@@ -79,4 +77,13 @@ func expandKey(k []byte) []uint32 {
 	}
 
 	return w
+}
+
+func addRoundKey(s []byte, w []uint32) []uint32 {
+	ns := make([]uint32, 4)
+	for c := 0; c < 4; c++ {
+		ns[c] = uint32(s[4*c]) << 24 | uint32(s[4*c+1]) << 16 | uint32(s[4*c+2]) << 8 | uint32(s[4*c+3])
+		ns[c] ^= w[c]
+	}
+	return ns
 }
